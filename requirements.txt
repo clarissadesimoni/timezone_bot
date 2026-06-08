@@ -1,0 +1,6 @@
+dateparser
+dotenv
+pymongo[srv]
+python-telegram-bot
+pytz
+timezonefinder
