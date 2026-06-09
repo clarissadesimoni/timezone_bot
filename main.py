@@ -12,6 +12,7 @@ from telegram.ext import (
     CommandHandler,
 )
 from timezonefinder import TimezoneFinder
+from typing import Dict
 
 # ================= CONFIG =================
 
@@ -138,8 +139,8 @@ def format_date(dt: datetime, user: User):
     elif fmt == "mdy":
         return dt.strftime("%m/%d/%Y")
 
-def format_datetime(dt: datetime, reference_dt: datetime, user: User):
-    tz = pytz.timezone(user["timezone"])
+def format_datetime(dt: datetime, reference_dt: datetime, user: Dict):
+    tz = pytz.timezone(user.get('timezone', DEFAULT_TZ))
     converted = dt.astimezone(tz)
     reference = reference_dt.astimezone(tz)
 
@@ -256,7 +257,7 @@ async def process_message(message: Message):
     sender_id = message.from_user.id
     sender = get_user(sender_id)
 
-    parsed_times = parse_times(times_raw, sender["timezone"])
+    parsed_times = parse_times(times_raw, sender.get('timezone', DEFAULT_TZ))
     print(parsed_times)
 
     mentioned_ids = get_mentioned_user_ids(message)
@@ -273,7 +274,7 @@ async def process_message(message: Message):
 
         sentence = replace_times_inline(text, parsed_times, user)
 
-        tz = user["timezone"]
+        tz = user.get('timezone', DEFAULT_TZ)
         lines.append(f"[{tz}] {sentence}")
 
     return "\n".join(lines)
@@ -281,7 +282,6 @@ async def process_message(message: Message):
 # ================= HANDLERS =================
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    print("Incoming message:", update.message.text)
 
     msg = update.message
 
