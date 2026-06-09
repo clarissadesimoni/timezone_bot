@@ -81,15 +81,15 @@ def extract_times(text) -> Tuple[str, str, str]:
 
 def parse_time_expression(item: Tuple[str, str, str], sender_tz: str):
     # detect range using "-"
-    print(item)
     tz = sender_tz
     try:
         if len(item[2]) > 0:
+            pytz.timezone(item[2])
             tz = item[2]
     except pytz.UnknownTimeZoneError:
         pass
     if "-" in item[0]:
-        parts = item.split("-", 1)
+        parts = item[0].split("-", 1)
         start_raw = parts[0].strip()
         end_raw = parts[1].strip()
 
@@ -130,7 +130,6 @@ def parse_time_expression(item: Tuple[str, str, str], sender_tz: str):
             "PREFER_DATES_FROM": "future",
         },
     )
-    print(dt)
     return dt
 
 def parse_times(times, sender_tz) -> List[Tuple[datetime | None, datetime | None] | datetime | None]:
