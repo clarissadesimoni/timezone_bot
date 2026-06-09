@@ -12,7 +12,7 @@ from telegram.ext import (
     CommandHandler,
 )
 from timezonefinder import TimezoneFinder
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 
 # ================= CONFIG =================
 
@@ -97,6 +97,7 @@ def parse_time_expression(item: Tuple[str, str, str], sender_tz: str):
             settings={
                 "TIMEZONE": tz,
                 "RETURN_AS_TIMEZONE_AWARE": True,
+                "PREFER_DATES_FROM": "future",
             },
         )
 
@@ -113,6 +114,7 @@ def parse_time_expression(item: Tuple[str, str, str], sender_tz: str):
             settings={
                 "TIMEZONE": tz,
                 "RETURN_AS_TIMEZONE_AWARE": True,
+                "PREFER_DATES_FROM": "future",
             },
         )
 
@@ -129,7 +131,7 @@ def parse_time_expression(item: Tuple[str, str, str], sender_tz: str):
     )
     return dt
 
-def parse_times(times, sender_tz):
+def parse_times(times, sender_tz) -> List[Tuple[datetime | None, datetime | None] | datetime | None]:
     parsed = []
 
     for t in times:
@@ -171,7 +173,7 @@ def format_datetime(dt: datetime, reference_dt: datetime, user: Dict):
 
 # ================= INLINE REPLACEMENT =================
 
-def replace_times_inline(text, times, user):
+def replace_times_inline(text: str, times: List[Tuple[datetime | None, datetime | None] | datetime | None], user: Dict):
     index = 0
 
     def repl(match):
@@ -268,7 +270,6 @@ async def process_message(message: Message):
     sender = get_user(sender_id)
 
     parsed_times = parse_times(times_raw, sender.get('timezone', DEFAULT_TZ))
-    print(parsed_times)
 
     mentioned_ids = get_mentioned_user_ids(message)
 
