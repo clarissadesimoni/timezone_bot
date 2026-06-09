@@ -125,7 +125,7 @@ def parse_time_expression(item: Tuple[str, str, str], sender_tz: str):
     dt = dateparser.parse(
         item[0],
         settings={
-            "TIMEZONE": sender_tz,
+            "TIMEZONE": tz,
             "RETURN_AS_TIMEZONE_AWARE": True,
             "PREFER_DATES_FROM": "future",
         },
