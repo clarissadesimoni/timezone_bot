@@ -44,8 +44,8 @@ def get_user(user_id):
         user = {
             "_id": user_id,
             "timezone": DEFAULT_TZ,
-            "time_format": "24h",
-            "date_format": "iso",
+            "time_format": DEFAULT_TIME_FMT,
+            "date_format": DEFAULT_DATE_FMT,
             "username": None,
             "chats": []
         }
@@ -61,6 +61,7 @@ def update_user(user_id, data):
     )
 
 def register_user_in_chat(user: User, chat_id):
+    get_user(user.id)
     users_col.update_one(
         {"_id": user.id},
         {
@@ -131,7 +132,7 @@ def parse_times(times, sender_tz):
 
 # ================= FORMATTING =================
 
-def format_date(dt: datetime, user: User):
+def format_date(dt: datetime, user: Dict):
     fmt = user.get('date_format', DEFAULT_DATE_FMT)
 
     if fmt == "iso":
@@ -182,7 +183,7 @@ def replace_times_inline(text, times, user):
             if not start or not end:
                 return match.group(0)
 
-            start_str = format_datetime(start, start, user)
+            start_str = format_datetime(start, datetime.now(), user)
             end_str = format_datetime(end, start, user)
 
             return f"{start_str}–{end_str}"
