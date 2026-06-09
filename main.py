@@ -149,6 +149,7 @@ def format_datetime(dt: datetime, reference_dt: datetime, user: Dict):
     reference = reference_dt.astimezone(tz)
 
     same_day = converted.date() == reference.date()
+    print(f'Date comparison: dt={format_date(converted, user)} ref={format_date(reference, user)}, same_day={same_day}')
 
     # time
     if user.get('time_format', DEFAULT_TIME_FMT) == "12h":
