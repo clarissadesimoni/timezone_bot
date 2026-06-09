@@ -12,7 +12,7 @@ from telegram.ext import (
     CommandHandler,
 )
 from timezonefinder import TimezoneFinder
-from typing import Dict
+from typing import Dict, Tuple
 
 # ================= CONFIG =================
 
@@ -33,7 +33,7 @@ users_col = db["users"]
 
 tf = TimezoneFinder()
 
-TIME_PATTERN = r"!time\((.*?)\)"
+TIME_PATTERN = r"!time\s?\((.*?)\)([(]([A-Za-z]+/[A-Za-z]+|UTC)[)])?"
 
 # ================= USER ===================
 
@@ -79,17 +79,23 @@ def get_chat_users(chat_id):
 def extract_times(text):
     return re.findall(TIME_PATTERN, text)
 
-def parse_time_expression(expr: str, sender_tz: str):
+def parse_time_expression(item: Tuple[str, str, str], sender_tz: str):
     # detect range using "-"
-    if "-" in expr:
-        parts = expr.split("-", 1)
+    tz = sender_tz
+    try:
+        if len(item[2]) > 0:
+            tz = pytz.timezone(item[2])
+    except pytz.UnknownTimeZoneError:
+        pass
+    if "-" in item[0]:
+        parts = item.split("-", 1)
         start_raw = parts[0].strip()
         end_raw = parts[1].strip()
 
         start_dt = dateparser.parse(
             start_raw,
             settings={
-                "TIMEZONE": sender_tz,
+                "TIMEZONE": tz,
                 "RETURN_AS_TIMEZONE_AWARE": True,
             },
         )
@@ -105,7 +111,7 @@ def parse_time_expression(expr: str, sender_tz: str):
         end_dt = dateparser.parse(
             end_raw,
             settings={
-                "TIMEZONE": sender_tz,
+                "TIMEZONE": tz,
                 "RETURN_AS_TIMEZONE_AWARE": True,
             },
         )
@@ -114,7 +120,7 @@ def parse_time_expression(expr: str, sender_tz: str):
 
     # single time
     dt = dateparser.parse(
-        expr,
+        item[0],
         settings={
             "TIMEZONE": sender_tz,
             "RETURN_AS_TIMEZONE_AWARE": True,
