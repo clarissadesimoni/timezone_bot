@@ -21,7 +21,9 @@ load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 MONGO_URI = os.getenv("MONGODB_URI")
 
-DEFAULT_TZ = "Europe/Rome"
+DEFAULT_TZ = "UTC"
+DEFAULT_TIME_FMT = "24h"
+DEFAULT_DATE_FMT = "iso"
 
 # ==========================================
 
@@ -130,7 +132,7 @@ def parse_times(times, sender_tz):
 # ================= FORMATTING =================
 
 def format_date(dt: datetime, user: User):
-    fmt = user["date_format"]
+    fmt = user.get('date_format', DEFAULT_DATE_FMT)
 
     if fmt == "iso":
         return dt.strftime("%Y-%m-%d")
@@ -147,7 +149,7 @@ def format_datetime(dt: datetime, reference_dt: datetime, user: Dict):
     same_day = converted.date() == reference.date()
 
     # time
-    if user["time_format"] == "12h":
+    if user.get('time_format', DEFAULT_TIME_FMT) == "12h":
         time_str = converted.strftime("%I:%M %p").lstrip("0")
     else:
         time_str = converted.strftime("%H:%M")
