@@ -81,6 +81,7 @@ def extract_times(text) -> Tuple[str, str, str]:
 
 def parse_time_expression(item: Tuple[str, str, str], sender_tz: str):
     # detect range using "-"
+    print(item)
     tz = sender_tz
     try:
         if len(item[2]) > 0:
