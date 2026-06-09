@@ -332,19 +332,42 @@ async def handle_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ================= COMMANDS =================
 
 async def set_tz(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    tz = context.args[0] if len(context.args) > 0 else DEFAULT_TZ
-    update_user(update.effective_user.id, {"timezone": tz})
-    await update.message.reply_text(f"✅ Timezone set to {tz}")
+    if len(context.args) > 0:
+        tz = context.args[0]
+        try:
+            pytz.timezone(tz)
+            update_user(update.effective_user.id, {"timezone": tz})
+            await update.message.reply_text(f"✅ Timezone set to {tz}")
+        except pytz.UnknownTimeZoneError:
+            await update.message.reply_text(f"❌ Invalid timezone: {tz}. You can either send your current location or retry the same command with one of the timezones in this list: https://mljar.com/blog/list-pytz-timezones/. The default is '{DEFAULT_TZ}'.")
+    else:
+        update_user(update.effective_user.id, {"timezone": DEFAULT_TZ})
+        await update.message.reply_text(f"✅ Timezone set to {DEFAULT_TZ}")
 
 async def set_format(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    val = "12h" if len(context.args) > 0 and context.args[0] == "12" else "24h"
+    if len(context.args) > 0:
+        val = context.args[0]
+        if val in ('12', '12h'):
+            val = '12h'
+        elif val in ('24', '24h'):
+            val = '24h'
+        else:
+            await update.message.reply_text(f"❌ Invalid time format: {val}. Allowed values are: '12', '12h', '24', and '24h'. The default is '{DEFAULT_TIME_FMT}'.")
+            return
     update_user(update.effective_user.id, {"time_format": val})
     await update.message.reply_text(f"✅ Format: {val}")
 
 async def set_date_format(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    fmt = context.args[0] if len(context.args) > 0 else 'iso'
-    update_user(update.effective_user.id, {"date_format": fmt})
-    await update.message.reply_text(f"✅ Date format: {fmt}")
+    if len(context.args) > 0:
+        val = context.args[0]
+        if val in ('iso', 'dmy', 'mdy'):
+            update_user(update.effective_user.id, {"date_format": val})
+            await update.message.reply_text(f"✅ Date format: {val}")
+        else:
+            await update.message.reply_text(f"❌ Invalid date format: {val}. Allowed values are: 'iso' for yyyy-mm-dd, 'dmy' for dd/mm/yyyy, and 'mdy' for mm/dd/yyyy. The default is '{DEFAULT_DATE_FMT}'.")
+    else:
+        update_user(update.effective_user.id, {"date_format": DEFAULT_DATE_FMT})
+        await update.message.reply_text(f"✅ Date format: {DEFAULT_DATE_FMT}")
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print("PING RECEIVED")
@@ -359,7 +382,7 @@ def main():
     print("Adding handlers...")
 
     app.add_handler(CommandHandler("settz", set_tz))
-    app.add_handler(CommandHandler("setformat", set_format))
+    app.add_handler(CommandHandler("settimeformat", set_format))
     app.add_handler(CommandHandler("setdateformat", set_date_format))
     app.add_handler(CommandHandler("ping", test))
 
