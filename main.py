@@ -37,7 +37,7 @@ TIME_PATTERN = r"!time\s?\((.*?)\)([(]([A-Za-z]+/[A-Za-z]+|UTC)[)])?"
 
 # ================= USER ===================
 
-def get_user(user_id):
+def get_user(user_id) -> Dict:
     user = users_col.find_one({"_id": user_id})
 
     if not user:
@@ -76,7 +76,7 @@ def get_chat_users(chat_id):
 
 # ================= PARSING =================
 
-def extract_times(text):
+def extract_times(text) -> Tuple[str, str, str]:
     return re.findall(TIME_PATTERN, text)
 
 def parse_time_expression(item: Tuple[str, str, str], sender_tz: str):
@@ -84,7 +84,7 @@ def parse_time_expression(item: Tuple[str, str, str], sender_tz: str):
     tz = sender_tz
     try:
         if len(item[2]) > 0:
-            tz = pytz.timezone(item[2])
+            tz = item[2]
     except pytz.UnknownTimeZoneError:
         pass
     if "-" in item[0]:
