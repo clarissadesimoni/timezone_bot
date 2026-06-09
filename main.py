@@ -286,7 +286,7 @@ async def process_message(message: Message):
         sentence = replace_times_inline(text, parsed_times, user)
 
         tz = user.get('timezone', DEFAULT_TZ)
-        lines.append(f"[{tz}] {sentence}")
+        lines.append(f"[{user.get('username', 'unknown username')} - {tz}] {sentence}")
 
     return "\n".join(lines)
 
