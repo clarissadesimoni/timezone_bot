@@ -194,7 +194,7 @@ def replace_times_inline(text, times, user):
         if value is None:
             return match.group(0)
 
-        return format_datetime(value, value, user)
+        return format_datetime(value, datetime.now(), user)
 
     return re.sub(TIME_PATTERN, repl, text)
 
