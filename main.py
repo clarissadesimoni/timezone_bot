@@ -118,6 +118,7 @@ def parse_time_expression(expr: str, sender_tz: str):
         settings={
             "TIMEZONE": sender_tz,
             "RETURN_AS_TIMEZONE_AWARE": True,
+            "PREFER_DATES_FROM": "future",
         },
     )
     return dt
