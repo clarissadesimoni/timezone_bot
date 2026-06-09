@@ -1,4 +1,4 @@
-import dateparser, pytz, os, re
+import asyncio, dateparser, pytz, os, re
 
 from datetime import datetime
 from dotenv import load_dotenv
@@ -353,7 +353,7 @@ async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # ================= MAIN =================
 
-def main():
+async def main():
     print("Building app...")
     app = ApplicationBuilder().token(TOKEN).build()
 
@@ -365,13 +365,14 @@ def main():
     app.add_handler(CommandHandler("ping", test))
 
     app.add_handler(MessageHandler(filters.LOCATION, handle_location))
-
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     app.add_handler(MessageHandler(filters.UpdateType.EDITED_MESSAGE, handle_edited))
 
-    print("Running polling...")
-    app.run_polling()
+    print("Clearing webhook & pending updates...")
+    await app.bot.delete_webhook(drop_pending_updates=True)
 
+    print("Running polling...")
+    await app.run_polling()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
