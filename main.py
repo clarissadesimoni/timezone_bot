@@ -130,6 +130,7 @@ def parse_time_expression(item: Tuple[str, str, str], sender_tz: str):
             "PREFER_DATES_FROM": "future",
         },
     )
+    print(dt)
     return dt
 
 def parse_times(times, sender_tz) -> List[Tuple[datetime | None, datetime | None] | datetime | None]:
