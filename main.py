@@ -289,7 +289,7 @@ async def process_message(message: Message):
         tz = user.get('timezone', DEFAULT_TZ)
         lines.append(f"[{user.get('username', 'unknown username')} - {tz}] {sentence}")
 
-    return "\n".join(lines)
+    return "\n\n".join(lines)
 
 # ================= HANDLERS =================
 
