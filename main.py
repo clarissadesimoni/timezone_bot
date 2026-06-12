@@ -241,7 +241,7 @@ def get_mentioned_user_ids(message: Message):
 def order_users(chat_type, sender_id, mentioned_ids, chat_user_ids):
     ordered = []
 
-    if chat_type == "private":
+    if chat_type == "PRIVATE":
         ordered.append(sender_id)
 
     for uid in mentioned_ids:
