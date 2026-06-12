@@ -238,10 +238,10 @@ def get_mentioned_user_ids(message: Message):
 
 # ================= ORDERING =================
 
-def order_users(chat_id, sender_id, mentioned_ids, chat_user_ids):
+def order_users(chat_type, sender_id, mentioned_ids, chat_user_ids):
     ordered = []
 
-    if chat_id == sender_id:
+    if chat_type == "private":
         ordered.append(sender_id)
 
     for uid in mentioned_ids:
@@ -278,7 +278,7 @@ async def process_message(message: Message):
     chat_users = get_chat_users(message.chat.id)
     chat_user_ids = [u["_id"] for u in chat_users]
 
-    ordered_ids = order_users(message.chat_id, sender_id, mentioned_ids, chat_user_ids)
+    ordered_ids = order_users(message.chat.type, sender_id, mentioned_ids, chat_user_ids)
 
     lines = []
 
