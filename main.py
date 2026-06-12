@@ -240,6 +240,8 @@ def get_mentioned_user_ids(message: Message):
 
 def order_users(chat_type, sender_id, mentioned_ids, chat_user_ids):
     ordered = []
+    
+    print(chat_type)
 
     if chat_type == "PRIVATE":
         ordered.append(sender_id)
