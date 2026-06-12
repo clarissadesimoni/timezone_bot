@@ -241,7 +241,7 @@ def get_mentioned_user_ids(message: Message):
 def order_users(sender_id, mentioned_ids, chat_user_ids):
     ordered = []
 
-    ordered.append(sender_id)
+    # ordered.append(sender_id)
 
     for uid in mentioned_ids:
         if uid != sender_id and uid in chat_user_ids:
