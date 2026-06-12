@@ -251,7 +251,7 @@ def order_users(chat_type, sender_id, mentioned_ids, chat_user_ids):
             ordered.append(uid)
 
     for uid in chat_user_ids:
-        if uid not in ordered:
+        if uid != sender_id and uid not in ordered:
             ordered.append(uid)
 
     return ordered
